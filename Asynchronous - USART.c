@@ -7,8 +7,8 @@
 
 void UART_init(unsigned int ubrr){
 	//set baud rate:
-	UBRR0H = (unsigned char)(ubrr>>8);
-	UBRR0L = (unsigned char)ubrr;
+	UBRR0H = 0;
+	UBRR0L = 51;
 	
 	//set frame format: 1 bit stop, 8 bit data
 	UCSR0C = (1<<UCSZ01) | (1<<UCSZ00);		// or UCSR0C = 0x06;
@@ -20,6 +20,11 @@ void UART_init(unsigned int ubrr){
 void Data_Tx(unsigned char data){
 	while(!(UCSR0A & (1 << UDRE0)));
 	UDR0 = data;
+}
+
+unsigned char Data_Rx(void){
+	while(!(UCSR0A & (1 << RXC0)));
+	return UDR0;
 }
 
 
@@ -34,7 +39,7 @@ int main(void)
 			Data_Tx('n');
 			Data_Tx(' ');
 			_delay_ms(1000);
-			
-		
+			Data_Rx();
+			_delay_ms(1000);		
 	}
 }
